@@ -1,6 +1,7 @@
 import random
 import streamlit as st
 import pandas as pd
+import time
 
 def generate_occupancy():
     """Generate random occupancy for all rooms in the hotel."""
@@ -135,6 +136,29 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     booked_room_numbers = [room[1] for room in booked_rooms]
     selected_room_numbers = [room[1] for room in selected_rooms]
     
+    # Add a legend
+    legend_html = """
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #ffffff; border: 1px solid #333; margin-right: 5px;"></div>
+            <span>Available</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #ff4d4d; margin-right: 5px;"></div>
+            <span>Occupied</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #4dff4d; margin-right: 5px;"></div>
+            <span>Currently Selected</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #4d79ff; margin-right: 5px;"></div>
+            <span>Previously Booked</span>
+        </div>
+    </div>
+    """
+    st.markdown(legend_html, unsafe_allow_html=True)
+    
     # Set up CSS for the grid
     st.markdown("""
     <style>
@@ -258,29 +282,6 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     
     # Display the grid
     st.markdown(html, unsafe_allow_html=True)
-    
-    # Add a legend
-    legend_html = """
-    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
-        <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #ffffff; border: 1px solid #333; margin-right: 5px;"></div>
-            <span>Available</span>
-        </div>
-        <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #ff4d4d; margin-right: 5px;"></div>
-            <span>Occupied</span>
-        </div>
-        <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #4dff4d; margin-right: 5px;"></div>
-            <span>Currently Selected</span>
-        </div>
-        <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #4d79ff; margin-right: 5px;"></div>
-            <span>Previously Booked</span>
-        </div>
-    </div>
-    """
-    st.markdown(legend_html, unsafe_allow_html=True)
 
 # Streamlit UI
 def main():
@@ -314,7 +315,7 @@ def main():
     with col2:
         if st.button("Book Room"):
             if not num_rooms.isdigit() or int(num_rooms) < 1 or int(num_rooms) > 5:
-                st.error("Please enter a valid number between 1 and 5.")
+                st.toast("Please enter a valid number between 1 and 5.", icon="❌")
             elif st.session_state.available_rooms:
                 selected_rooms, travel_time = book_rooms(st.session_state.available_rooms, int(num_rooms))
                 if selected_rooms:
@@ -331,22 +332,20 @@ def main():
                     st.session_state.last_selected_rooms = selected_rooms
                     st.session_state.booked_rooms.extend(selected_rooms)
                     room_numbers = [room[1] for room in selected_rooms]
-                    st.success(f"Successfully booked {len(selected_rooms)} room(s): {room_numbers}")
-                    st.info(f"Total travel time between rooms: {travel_time} minutes")
+                    st.toast(f"Successfully booked {len(selected_rooms)} room(s): {room_numbers}", icon="✅")
+                    st.toast(f"Total travel time between rooms: {travel_time} minutes", icon="ℹ️")
                 else:
-                    st.error("Not enough rooms available to fulfill your request.")
+                    st.toast("Not enough rooms available to fulfill your request.", icon="❌")
             else:
-                st.error("Please generate room occupancy first.")
+                st.toast("Please generate room occupancy first.", icon="❌")
     
     with col3:
         if st.button("Reset Booking"):
-            # st.session_state.occupancy = None
-            # st.session_state.available_rooms = None
             st.session_state.booked_rooms = []
             st.session_state.last_selected_rooms = []
             st.session_state.booking_history = []
             st.session_state.text_input_value = ""
-            st.success("Booking reset successfully.")
+            st.toast("Booking reset successfully.", icon="✅")
     
     with col4:
         if st.button("Generate Random Occupancy"):
@@ -356,7 +355,7 @@ def main():
             st.session_state.last_selected_rooms = []
             st.session_state.booking_history = []
             st.session_state.text_input_value = ""
-            st.success("Random occupancy generated successfully.")
+            st.toast("Random occupancy generated successfully.", icon="✅")
     
     # Display hotel visualization
     if st.session_state.occupancy:
