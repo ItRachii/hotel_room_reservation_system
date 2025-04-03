@@ -132,6 +132,10 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     if selected_rooms is None:
         selected_rooms = []
     
+    # Mark booked rooms as occupied in the occupancy dictionary
+    for _, room_number in booked_rooms:
+        occupancy[room_number] = True
+
     # Extract just the room numbers from booked_rooms list of tuples
     booked_room_numbers = [room[1] for room in booked_rooms]
     selected_room_numbers = [room[1] for room in selected_rooms]
@@ -140,20 +144,16 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     legend_html = """
     <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
         <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #ffffff; border: 1px solid #333; margin-right: 5px;"></div>
-            <span>Available</span>
+            <div style="width: 20px; height: 20px; background-color: #ffffff; border: 3px solid #4CAF50; margin-right: 5px;"></div>
+            <span style="color: white;">Available</span>
         </div>
         <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #ff4d4d; margin-right: 5px;"></div>
-            <span>Occupied</span>
+            <div style="width: 20px; height: 20px; background-color: #d3d3d3; margin-right: 5px;"></div>
+            <span style="color: white;">Occupied</span>
         </div>
         <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #4dff4d; margin-right: 5px;"></div>
-            <span>Currently Selected</span>
-        </div>
-        <div style="display: flex; align-items: center;">
-            <div style="width: 20px; height: 20px; background-color: #4d79ff; margin-right: 5px;"></div>
-            <span>Previously Booked</span>
+            <div style="width: 20px; height: 20px; background-color: #4CAF50; color: black; font-weight: bold; margin-right: 5px;"></div>
+            <span style="color: white;">Currently Selected</span>
         </div>
     </div>
     """
@@ -173,7 +173,7 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
         text-align: center;
         background-color: #f0f0f0;
         border-radius: 5px;
-        font-weight: bold;
+        font-weight: normal; /* Change from bold to normal */
     }
     .floor-label {
         background-color: #333;
@@ -219,20 +219,21 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     }
     .room-available {
         background-color: #ffffff; /* White background */
-        color: #000000; /* Black font */
-        border: 1px solid #333;
+        color: #4CAF50; /* Green font */
+        border: 3px solid #4CAF50; /* Green border */
     }
     .room-occupied {
-        background-color: #ff4d4d;
-        color: white;
+        background-color: #d3d3d3; /* Light grey background */
+        color: white; /* White font */
     }
     .room-booked {
-        background-color: #4d79ff;
+        background-color: #d3d3d3;
         color: white;
     }
     .room-selected {
-        background-color: #4dff4d;
+        background-color: #4CAF50;
         color: black;
+        font-weight: bold; /* Make selected room text bold */
     }
     .room-empty {
         background-color: transparent;
@@ -341,10 +342,18 @@ def main():
     
     with col3:
         if st.button("Reset Booking"):
+            # Reset the occupancy for booked and selected rooms
+            for _, room_number in st.session_state.booked_rooms:
+                st.session_state.occupancy[room_number] = False
+            for _, room_number in st.session_state.last_selected_rooms:
+                st.session_state.occupancy[room_number] = False
+            
+            # Clear the session state for booked and selected rooms
             st.session_state.booked_rooms = []
             st.session_state.last_selected_rooms = []
             st.session_state.booking_history = []
             st.session_state.text_input_value = ""
+            
             st.toast("Booking reset successfully.", icon="✅")
     
     with col4:
