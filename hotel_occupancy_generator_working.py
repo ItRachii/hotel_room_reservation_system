@@ -311,7 +311,7 @@ def main():
     col1, col2, col3, col4 = st.columns(4, gap="medium")
     
     with col1:
-        num_rooms = st.text_input("Number of Rooms", placeholder="Enter number of rooms", label_visibility="hidden")
+        num_rooms = st.text_input("Number of Rooms", placeholder="Number of rooms", label_visibility="hidden")
     
     with col2:
         if st.button("Book Room"):

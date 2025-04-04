@@ -2,6 +2,7 @@ import random
 import streamlit as st
 import pandas as pd
 import time
+import base64
 
 def generate_occupancy():
     """Generate random occupancy for all rooms in the hotel."""
@@ -145,15 +146,15 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
         <div style="display: flex; align-items: center;">
             <div style="width: 20px; height: 20px; background-color: #ffffff; border: 3px solid #4CAF50; margin-right: 5px;"></div>
-            <span style="color: white;">Available</span>
+            <span style="color: black;">Available</span>
         </div>
         <div style="display: flex; align-items: center;">
             <div style="width: 20px; height: 20px; background-color: #d3d3d3; margin-right: 5px;"></div>
-            <span style="color: white;">Occupied</span>
+            <span style="color: black;">Occupied</span>
         </div>
         <div style="display: flex; align-items: center;">
             <div style="width: 20px; height: 20px; background-color: #4CAF50; color: black; font-weight: bold; margin-right: 5px;"></div>
-            <span style="color: white;">Currently Selected</span>
+            <span style="color: black;">Currently Selected</span>
         </div>
     </div>
     """
@@ -284,9 +285,60 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     # Display the grid
     st.markdown(html, unsafe_allow_html=True)
 
+def get_base64_image(image_path):
+    """Convert an image to a Base64 string."""
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
 # Streamlit UI
 def main():
     st.title("Hotel Room Reservation System")
+    
+    # Convert the image to Base64
+    image_base64 = get_base64_image("image/vacation.png")
+    
+    # Add custom CSS for background image
+    st.markdown(
+        f"""
+        <style>
+        body {{
+            background-image: url("data:image/png;base64,{image_base64}");
+            background-size: cover; /* Ensure the image covers the entire screen */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent tiling */
+            background-attachment: fixed; /* Keep the image fixed during scrolling */
+        }}
+        .stApp {{
+            background-color: rgba(255, 255, 255, 0.8); /* Add transparency to the app content */
+            border-radius: 10px;
+            padding: 20px;
+        }}
+        h1, h2, h3, h4, h5, h6 {{
+            color: black; /* Change heading font color to black */
+        }}
+        .stMarkdown legend {{
+            color: black; /* Change legend font color to black */
+        }}
+        .legend span {{
+            color: black; /* Ensure legend text is black */
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
     st.markdown("""
     <style>
     .stTextInput > div {
@@ -298,6 +350,59 @@ def main():
     }
     </style>
     """, unsafe_allow_html=True)
+    
+    st.markdown(
+        """
+        <style>
+        .search-container {
+            display: flex;
+            align-items: center;
+            background-color: white; /* Background color for the container */
+            border-radius: 25px; /* Rounded edges */
+            padding: 10px 20px; /* Padding inside the container */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            margin-bottom: 20px; /* Spacing below the container */
+        }
+        .search-container input {
+            border: none;
+            outline: none;
+            font-size: 16px;
+            flex: 1; /* Allow the input to grow */
+            margin-right: 10px; /* Spacing between input and buttons */
+        }
+        .search-container button {
+            background-color: #FF5722; /* Button color */
+            color: white;
+            border: none;
+            border-radius: 50%; /* Circular button */
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .search-container button:hover {
+            background-color: #E64A19; /* Darker shade on hover */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # HTML structure for the search box
+    # st.markdown(
+    #     """
+    #     <div class="search-container">
+    #         <input type="text" placeholder="Room Type" />
+    #         <input type="date" placeholder="Check In" />
+    #         <input type="date" placeholder="Check Out" />
+    #         <button>🔍</button>
+    #     </div>
+    #     """,
+    #     unsafe_allow_html=True
+    # )
     
     # Initialize session state
     if "occupancy" not in st.session_state:
@@ -311,7 +416,7 @@ def main():
     col1, col2, col3, col4 = st.columns(4, gap="medium")
     
     with col1:
-        num_rooms = st.text_input("Number of Rooms", placeholder="Enter number of rooms", label_visibility="hidden")
+        num_rooms = st.text_input("Number of Rooms", placeholder="Number of rooms", label_visibility="hidden")
     
     with col2:
         if st.button("Book Room"):
