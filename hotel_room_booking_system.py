@@ -391,6 +391,19 @@ def main():
         unsafe_allow_html=True
     )
 
+    st.markdown("""
+    <style>
+    .stTable {
+        color: black; /* Set text color to black for better readability */
+        font-size: 16px; /* Adjust font size for better visibility */
+        background-color: white; /* Ensure the background is white */
+        border: 1px solid #ddd; /* Add a subtle border for clarity */
+        border-radius: 5px; /* Add rounded corners */
+        padding: 10px; /* Add padding for spacing */
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # HTML structure for the search box
     # st.markdown(
     #     """
