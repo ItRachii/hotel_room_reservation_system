@@ -326,20 +326,7 @@ def main():
         """,
         unsafe_allow_html=True
     )
-    
-    st.markdown(
-        """
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&display=swap');
-        h1 {
-            font-family: 'Nanum Myeongjo', serif;
-            font-weight: 700;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-    
+   
     st.markdown(
         """
         <style>
