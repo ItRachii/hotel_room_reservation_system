@@ -330,9 +330,27 @@ def main():
     st.markdown(
         """
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Playfair Display', serif;
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&display=swap');
+        h1 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-weight: 700;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&display=swap');
+        h1 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-weight: 700;
+            font-size: 3rem; /* Increase font size */
+            text-align: center; /* Center the title */
+            margin-top: 20px; /* Add some spacing above */
+            margin-bottom: 20px; /* Add some spacing below */
         }
         </style>
         """,
