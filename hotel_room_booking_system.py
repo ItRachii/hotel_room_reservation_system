@@ -297,30 +297,25 @@ def main():
     # Convert the image to Base64
     image_base64 = get_base64_image("image/vacation.png")
     
-    # Add custom CSS for background image
+    # Add custom CSS for background image and font styles
     st.markdown(
         f"""
         <style>
         body {{
             background-image: url("data:image/png;base64,{image_base64}");
-            background-size: cover; /* Ensure the image covers the entire screen */
-            background-position: center; /* Center the image */
-            background-repeat: no-repeat; /* Prevent tiling */
-            background-attachment: fixed; /* Keep the image fixed during scrolling */
+            background-size: cover !important; /* Ensure the image covers the entire screen */
+            background-position: center !important; /* Center the image */
+            background-repeat: no-repeat !important; /* Prevent tiling */
+            background-attachment: fixed !important; /* Keep the image fixed during scrolling */
         }}
         .stApp {{
-            background-color: rgba(255, 255, 255, 0.8); /* Add transparency to the app content */
-            border-radius: 10px;
-            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8) !important; /* Add transparency to the app content */
+            border-radius: 10px !important;
+            padding: 20px !important;
         }}
         h1, h2, h3, h4, h5, h6 {{
-            color: black; /* Change heading font color to black */
-        }}
-        .stMarkdown legend {{
-            color: black; /* Change legend font color to black */
-        }}
-        .legend span {{
-            color: black; /* Ensure legend text is black */
+            color: black !important; /* Change heading font color to black */
+            font-family: 'Nanum Myeongjo', serif !important; /* Ensure the font is applied */
         }}
         </style>
         """,
