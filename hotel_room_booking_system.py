@@ -404,6 +404,34 @@ def main():
     </style>
     """, unsafe_allow_html=True)
 
+    st.markdown("""
+    <style>
+    .stTable {
+        color: white; /* Set text color to white for readability on black background */
+        font-size: 16px; /* Adjust font size for better visibility */
+        background-color: black; /* Set background color to black */
+        border: 1px solid #ddd; /* Add a subtle border for clarity */
+        border-radius: 5px; /* Add rounded corners */
+        padding: 10px; /* Add padding for spacing */
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <style>
+    .stExpander {
+        background-color: black !important; /* Set background color to black */
+        color: white !important; /* Set text color to white for readability */
+        border: 1px solid #ddd !important; /* Add a subtle border for clarity */
+        border-radius: 5px !important; /* Add rounded corners */
+        padding: 10px !important; /* Add padding for spacing */
+    }
+    .stExpander > div > div {
+        color: white !important; /* Ensure the content inside the expander is white */
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # HTML structure for the search box
     # st.markdown(
     #     """
