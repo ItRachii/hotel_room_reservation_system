@@ -115,11 +115,16 @@ def book_rooms(available_rooms, num_rooms):
     # Book the selected rooms (remove them from available rooms)
     if best_combination:
         for floor, pos in best_combination:
-            available_rooms[floor].remove(pos)
-            # If a floor has no more available rooms, remove it
-            if not available_rooms[floor]:
-                available_rooms.pop(floor)
-                
+            # available_rooms[floor].remove(pos)
+            # # If a floor has no more available rooms, remove it
+            # if not available_rooms[floor]:
+            #     available_rooms.pop(floor)
+            if floor in available_rooms and pos in available_rooms[floor]:
+                available_rooms[floor].remove(pos)
+                # If a floor has no more available rooms, remove it
+                if not available_rooms[floor]:
+                    available_rooms.pop(floor)
+
         # Convert position to full room numbers
         booked_room_numbers = [(floor, floor * 100 + pos) for floor, pos in best_combination]
         return booked_room_numbers, travel_time
@@ -133,9 +138,12 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
     if selected_rooms is None:
         selected_rooms = []
     
-    # Mark booked rooms as occupied in the occupancy dictionary
+    # Create a deep copy of occupancy to avoid modifying the original
+    visualization_occupancy = occupancy.copy()
+
+    # Mark booked rooms as occupied in the visualization occupancy dictionary
     for _, room_number in booked_rooms:
-        occupancy[room_number] = True
+        visualization_occupancy[room_number] = True
 
     # Extract just the room numbers from booked_rooms list of tuples
     booked_room_numbers = [room[1] for room in booked_rooms]
@@ -270,7 +278,7 @@ def visualize_hotel(occupancy, booked_rooms=None, selected_rooms=None):
                     status_class = "room-selected"
                 elif room_number in booked_room_numbers:
                     status_class = "room-booked"
-                elif occupancy.get(room_number, False):
+                elif visualization_occupancy.get(room_number, False):
                     status_class = "room-occupied"
                 else:
                     status_class = "room-available"
@@ -478,6 +486,13 @@ def main():
                     
                     st.session_state.last_selected_rooms = selected_rooms
                     st.session_state.booked_rooms.extend(selected_rooms)
+                    
+
+                    # Update the occupancy status for the booked rooms
+                    for _, room_number in selected_rooms:
+                        st.session_state.occupancy[room_number] = True
+
+        
                     room_numbers = [room[1] for room in selected_rooms]
                     st.toast(f"Successfully booked {len(selected_rooms)} room(s): {room_numbers}", icon="✅")
                     st.toast(f"Total travel time between rooms: {travel_time} minutes", icon="ℹ️")
@@ -491,15 +506,15 @@ def main():
             # Reset the occupancy for booked and selected rooms
             for _, room_number in st.session_state.booked_rooms:
                 st.session_state.occupancy[room_number] = False
-            for _, room_number in st.session_state.last_selected_rooms:
-                st.session_state.occupancy[room_number] = False
+            # for _, room_number in st.session_state.last_selected_rooms:
+            #     st.session_state.occupancy[room_number] = False
             
             # Clear the session state for booked and selected rooms
             st.session_state.booked_rooms = []
             st.session_state.last_selected_rooms = []
             st.session_state.booking_history = []
-            st.session_state.text_input_value = ""
-            
+            # Recalculate available rooms based on current occupancy
+            st.session_state.available_rooms = get_available_rooms_by_floor(st.session_state.occupancy)
             st.toast("Booking reset successfully.", icon="✅")
     
     with col4:
@@ -509,7 +524,7 @@ def main():
             st.session_state.booked_rooms = []
             st.session_state.last_selected_rooms = []
             st.session_state.booking_history = []
-            st.session_state.text_input_value = ""
+            # st.session_state.text_input_value = ""
             st.toast("Random occupancy generated successfully.", icon="✅")
     
     # Display hotel visualization
