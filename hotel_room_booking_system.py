@@ -455,11 +455,12 @@ def main():
     
     # Initialize session state
     if "occupancy" not in st.session_state:
-        st.session_state.occupancy = None
-        st.session_state.available_rooms = None
+        st.session_state.occupancy = generate_occupancy()  # Generate room occupancy
+        st.session_state.available_rooms = get_available_rooms_by_floor(st.session_state.occupancy)
         st.session_state.booked_rooms = []
         st.session_state.last_selected_rooms = []
         st.session_state.booking_history = []
+        st.toast("Room occupancy generated successfully.", icon="✅")
     
     # Layout for input and buttons
     col1, col2, col3, col4 = st.columns(4, gap="medium")
@@ -503,19 +504,21 @@ def main():
     
     with col3:
         if st.button("Reset Booking"):
-            # Reset the occupancy for booked and selected rooms
-            for _, room_number in st.session_state.booked_rooms:
-                st.session_state.occupancy[room_number] = False
-            # for _, room_number in st.session_state.last_selected_rooms:
-            #     st.session_state.occupancy[room_number] = False
-            
-            # Clear the session state for booked and selected rooms
-            st.session_state.booked_rooms = []
-            st.session_state.last_selected_rooms = []
-            st.session_state.booking_history = []
-            # Recalculate available rooms based on current occupancy
-            st.session_state.available_rooms = get_available_rooms_by_floor(st.session_state.occupancy)
-            st.toast("Booking reset successfully.", icon="✅")
+            if not st.session_state.booking_history:
+                # Display a message if no bookings were made
+                st.toast("No bookings were made to reset.", icon="ℹ️")
+            else:
+                # Reset the occupancy for booked and selected rooms
+                for _, room_number in st.session_state.booked_rooms:
+                    st.session_state.occupancy[room_number] = False
+                
+                # Clear the session state for booked and selected rooms
+                st.session_state.booked_rooms = []
+                st.session_state.last_selected_rooms = []
+                st.session_state.booking_history = []
+                # Recalculate available rooms based on current occupancy
+                st.session_state.available_rooms = get_available_rooms_by_floor(st.session_state.occupancy)
+                st.toast("Booking reset successfully.", icon="✅")
     
     with col4:
         if st.button("Generate Random Occupancy"):
